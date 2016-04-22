@@ -8,7 +8,7 @@ fi
 if test -n "$1" && test -n "$2"; then
     iso="$1"
     usb="$2"
-    
+
     if test -e "$iso" && test -b "$usb"; then
         dd status=progress bs=4M if="$iso" of="$usb" && sync
     fi
