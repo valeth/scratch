@@ -44,7 +44,8 @@ module WaniKani
         end
 
         def to_s
-            "#{@TYPE}(#{@CHARACTER || @IMAGE}, #{@AVAILABLE_DATE})"
+            timestr = Time.at(@AVAILABLE_DATE).strftime('%Y-%m-%d %H:%M:%S')
+            "#{@TYPE}(#{@CHARACTER || @IMAGE}, #{timestr})"
         end
 
         alias to_str to_s
@@ -104,15 +105,15 @@ module WaniKani
         get('srs-distribution')['requested_information']
     end
 
-    def self.recent_unlocks(limit = 10)
+    def self.recent_unlocks(limit: 10)
         get('recent-unlocks', limit.to_s)['requested_information']
     end
 
-    def self.critical_items(threshold = 75)
+    def self.critical_items(threshold: 75)
         get('critical-items', threshold.to_s)['requested_information']
     end
 
-    def self.radicals_list(levels = [])
+    def self.radicals_list(levels: [])
         tmp = []
         get('radicals', levels.join(','))['requested_information'].each do |elem|
             tmp << JSymbol.new('radical', elem)
@@ -120,15 +121,17 @@ module WaniKani
         tmp
     end
 
-    def self.kanji_list(levels = [])
+    def self.kanji_list(levels: [])
         tmp = []
         get('kanji', levels.join(','))['requested_information'].each do |elem|
             tmp << JSymbol.new('kanji', elem)
         end
-        tmp
+
+        tmp.sort_by! { |x| x.AVAILABLE_DATE }
+        tmp.reverse!
     end
 
-    def self.vocabulary_list(levels = [])
+    def self.vocabulary_list(levels: [])
         tmp = []
         get('vocabulary', levels.join(','))['requested_information']['general'].each do |elem|
             tmp << JSymbol.new('vocabulary', elem)
@@ -136,7 +139,7 @@ module WaniKani
         tmp
     end
 
-    def self.all_items_list(levels = [])
+    def self.all_items_list(levels: [])
         (radicals_list + kanji_list) + vocabulary_list
     end
 
