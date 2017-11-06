@@ -1,5 +1,7 @@
 #!/usr/bin/ruby -w
 
+# TODO: clean this fucking mess, it's disgusting
+
 module WaniKani
     require 'json'
     require 'net/http'
